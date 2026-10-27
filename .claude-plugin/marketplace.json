@@ -1,0 +1,16 @@
+{
+  "name": "agoin-skills",
+  "owner": {
+    "name": "AGOIN"
+  },
+  "plugins": [
+    {
+      "name": "agoin",
+      "source": "./",
+      "description": "Criterios de trabajo de AGOIN y procedimientos probados (Revit, mediciones, planos, instalaciones, estructura, informes, web, vídeo, apps)."
+    }
+  ],
+  "metadata": {
+    "description": "Skills internas de AGOIN para Claude Code: criterios de trabajo y procedimientos probados."
+  }
+}
