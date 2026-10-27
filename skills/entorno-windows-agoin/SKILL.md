@@ -27,7 +27,9 @@ description: "Trampas del entorno de trabajo de AGOIN que ya han hecho perder ho
   - Escribe un archivo y ejecútalo. Para parchear un archivo, usa la herramienta de edición.
 - **Rutas de Windows dentro de cadenas de Python.**
   - `\a`, `\n` y las secuencias octales las corrompen: `dynamo\162` acabó en `dynamor`. Usa cadenas raw o barras normales.
-  - Dentro de un heredoc de Bash sin comillas (`<<EOF`), una doble barra invertida llega como una sola. Usa `<<'EOF'`.
+  - En la herramienta Bash de Claude Code, una doble barra invertida dentro de un heredoc llega al archivo como una sola, **incluso con `<<'EOF'`**. Se comprobó el 27/10/2026.
+    - Escribe los scripts con la herramienta de escritura de archivos.
+    - O usa `/` o `chr(92)` en las rutas y en las expresiones regulares.
 - **Node ESM necesita `file:///C:/...`** para las rutas absolutas.
 - **PowerShell:**
   - `| Select-Object -First N` corta el comando que lo alimenta en cuanto llegan N objetos. Así se paró un servicio en producción.

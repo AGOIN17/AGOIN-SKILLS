@@ -38,8 +38,8 @@ Encontradas con Revit 2027 y Dynamo 4 (PythonNet3), octubre de 2026, en el proye
   - Comprueba si hay un diálogo abierto (EnumWindows). Si no lo hay, Revit sigue ocupado.
   - Espera y consulta el estado antes de relanzar.
 - **Tras reiniciar Dynamo**, la primera llamada puede responder «tool not found». Reintenta una vez.
-- **Rutas escritas desde Bash:** en un heredoc sin comillas (`<<EOF`), una doble barra invertida llega a Python como una sola. Una ruta con `\a` se convirtió en el carácter BEL.
-  - Usa `<<'EOF'`.
+- **Rutas escritas desde Bash:** en la herramienta Bash de Claude Code, una doble barra invertida dentro de un heredoc llega a Python como una sola, incluso con `<<'EOF'`. Una ruta con `\a` se convirtió en el carácter BEL.
+  - Escribe los scripts con la herramienta de escritura de archivos.
   - Escribe las rutas con `/`.
   - O edita los archivos con la herramienta de edición.
 
