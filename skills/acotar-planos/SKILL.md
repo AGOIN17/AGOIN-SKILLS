@@ -1,6 +1,6 @@
 ---
 name: acotar-planos
-description: "Cómo acotar plantas de arquitectura de forma limpia y normalizada (cadenas exteriores por fachada, ejes junto a las burbujas, luces libres interiores, sin cifras superpuestas), y cómo hacerlo en Revit por API/Dynamo con referencias al modelo. Usar cuando se pida acotar o reacotar una planta, revisar un plano de acotación \"sucio\" o con cotas superpuestas, o preparar una hoja de cotas tipo proyecto de ejecución."
+description: Cómo acotar plantas de arquitectura de forma limpia y normalizada (cadenas exteriores por fachada, ejes junto a las burbujas, luces libres interiores, sin cifras superpuestas), y cómo hacerlo en Revit por API/Dynamo con referencias al modelo. Usar cuando se pida acotar o reacotar una planta, revisar un plano de acotación "sucio" o con cotas superpuestas, o preparar una hoja de cotas tipo proyecto de ejecución.
 ---
 
 # Acotar plantas de arquitectura
