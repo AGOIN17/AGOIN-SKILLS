@@ -1,6 +1,8 @@
 ---
 name: desarrollo-apps-agoin
-description: "Reglas y trampas para desarrollar y desplegar las aplicaciones internas de AGOIN (Next.js, React/Vite, Firebase/Firestore, Cloud Run, Turso/SQLite, Docker, conectores con Sage o CRM, apps con LLM). Cubre los datos de producción intocables, quién puede desplegar, las migraciones, los secretos, los costes, las integraciones y las pruebas. Úsala al trabajar en cualquier repositorio de una app de AGOIN, y antes de desplegar, migrar datos, tocar reglas o permisos, o integrar dos apps."
+description: "[APPS] Reglas y trampas para desarrollar y desplegar las aplicaciones internas de AGOIN (Next.js, React/Vite, Firebase/Firestore, Cloud Run, Turso/SQLite, Docker, conectores con Sage o CRM, apps con LLM). Cubre los datos de producción intocables, quién puede desplegar, las migraciones, los secretos, los costes, las integraciones y las pruebas. Úsala al trabajar en cualquier repositorio de una app de AGOIN, y antes de desplegar, migrar datos, tocar reglas o permisos, o integrar dos apps; también al usar como usuario una app de AGOIN en producción (por ejemplo, cargar partidas en el Generador de precios)."
+metadata:
+  etiquetas: "APPS"
 ---
 
 # Desarrollo de apps de AGOIN
@@ -34,6 +36,12 @@ description: "Reglas y trampas para desarrollar y desplegar las aplicaciones int
   - cuenta los registros antes y después;
   - nunca `firestore:delete` ni `gsutil rm` sin una orden expresa.
   - Palabras del usuario: «no borres nada de los otros proyectos, que están en producción».
+- **Usar una app de AGOIN en producción como usuario** (por ejemplo, cargar partidas en el Generador de precios):
+  - trabaja solo en el proyecto o presupuesto que te nombran, y no borres nada, ni ahí ni en otros («están en producción y es muy importante»);
+  - el repositorio de la app es de solo lectura: léelo solo para entender los formularios y la API;
+  - carga con un registro reanudable que solo añade, e informa por bloques (capítulo a capítulo);
+  - lo que se crea fuera del proyecto (precios propios, grupos de selección) es global y lo ven otros: lístalo en la respuesta;
+  - en el Generador, el buscador exige el código exacto, y dos líneas con el mismo código chocan al exportar a BC3: junta sus mediciones en una línea, con el título propio en el comentario. Cómo preparar la carga: `mediciones-presupuesto`.
 - **Escribir en la base de datos de otra app:**
   - sin borrar;
   - `update()` campo a campo, nunca `set()` sobre documentos que ya existen;

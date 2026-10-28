@@ -7,7 +7,7 @@
     {
       "name": "agoin",
       "source": "./",
-      "description": "Criterios de trabajo de AGOIN y procedimientos probados (Revit, mediciones, planos, instalaciones, estructura, informes, web, vídeo, apps)."
+      "description": "Cómo trabaja AGOIN, su libro de estilo y procedimientos probados, etiquetados por tema (ESTILO, PROYECTO, MEDICIONES, REVIT, PLANOS, INSTALACIONES, ROBOT, BLENDER, WEB, OPTIMIZACIÓN, WINDOWS, APPS)."
     }
   ],
   "metadata": {

@@ -1,6 +1,8 @@
 ---
 name: automatizar-programas-windows
-description: "Cómo manejar desde un script programas de escritorio de Windows cuando su API no llega (Robot, AutoCAD, Presto, CYPE, Word, Excel…; en Revit solo leer sus diálogos, ver revit-automatizacion) con pywinauto, UI Automation y COM, sin estropear el trabajo del usuario. Cubre trabajar en una instancia propia y visible, no tocar nunca su ventana de trabajo, teclear en vez de WM_SETTEXT, diálogos anidados, reintentos, capturas, e imprimir solo con «Microsoft Print to PDF» comprobando la impresora. Úsala cuando haya que pulsar, rellenar, leer o imprimir en la ventana de un programa, cuando un diálogo bloquee un proceso, al convertir documentos a PDF en Windows o al automatizar AutoCAD."
+description: "[WINDOWS] Cómo manejar desde un script programas de escritorio de Windows y webs con sesión cuando su API no llega (Robot, AutoCAD, Presto, CYPE, Word, Excel, Chrome…; en el Revit del usuario solo leer sus diálogos, y en una instancia propia ver revit-automatizacion) con pywinauto, UI Automation y COM, sin estropear el trabajo del usuario. Cubre trabajar en una instancia propia y visible, no tocar nunca su ventana de trabajo, teclear en vez de WM_SETTEXT, diálogos anidados, reintentos, capturas, e imprimir solo con «Microsoft Print to PDF» comprobando la impresora. Úsala cuando haya que pulsar, rellenar, leer o imprimir en la ventana de un programa, cuando un diálogo bloquee un proceso, al convertir documentos a PDF en Windows, al automatizar AutoCAD o al manejar una web cuando «Claude in Chrome» no conecta."
+metadata:
+  etiquetas: "WINDOWS"
 ---
 
 # Manejar programas de Windows desde código
@@ -14,7 +16,7 @@ Estas reglas evitan los dos.
 
 ## Reglas
 
-- **Antes de empezar, explica qué vas a hacer y pide el visto bueno.**
+- **Antes de empezar, explica qué vas a hacer y pide el visto bueno** la primera vez; después, avisa cada vez que vayas a manejar la ventana.
   - El usuario verá el programa moverse solo.
   - Pídele que no toque esa ventana mientras trabaja.
 - **Trabaja en una instancia del programa abierta por ti, con un archivo copia.**
@@ -23,7 +25,7 @@ Estas reglas evitan los dos.
 - **Al terminar, cierra tu instancia y espera a que el proceso acabe.**
   - Mata solo procesos que hayas abierto tú: guarda su PID.
   - Nunca mates procesos por su nombre.
-- **Si un diálogo de un programa del usuario bloquea algo,** lee su texto y sus botones sin pulsar nada, y pregúntale.
+- **Si un diálogo de un programa del usuario bloquea algo,** lee su texto y sus botones sin pulsar nada, y pregúntale. En una instancia abierta por ti sí puedes manejarlo, avisando y con mensajes dirigidos a su proceso.
 - **Imprime solo con «Microsoft Print to PDF».**
   - Selecciónala y comprueba que el desplegable la muestra y que el tipo de impresora dice PDF.
   - Si no se cumple, cancela.
@@ -48,6 +50,20 @@ Estas reglas evitan los dos.
 - **Reintenta con espera** todo lo que depende de que la ventana esté lista (pestañas, diálogos). Espera comprobando, no con un `sleep` largo fijo.
 - **Barras de herramientas y paneles:** en algunos programas son `Pane` en UIA. Identifícalos por nombre e índice, y confírmalo con una captura.
 - **Antes de pulsar un botón de aviso** («Sí», «Aceptar»), lee y guarda su texto.
+- **Diálogos MFC** (como los de Revit o Robot), solo en instancias propias: no exponen patrones de UI Automation, pero los botones aceptan BM_CLICK; las rejillas Objective Grid aceptan WM_LBUTTONDOWN y WM_CHAR, y su edición interna (GXEDIT) WM_SETTEXT; `PrintWindow` captura un diálogo aunque esté tapado.
+- **Las cintas WPF** (el botón de Dynamo en Revit) no responden a mensajes enviados: hace falta un clic real del ratón. Solo en tu instancia, nunca en la del usuario. Pide permiso, comprueba que la ventana está delante, hazlo cuando el usuario no esté usando el equipo y repite si el clic cayó en otra ventana.
+- **Para que un programa no coja un puerto al arrancar** (8080), ocúpalo un rato con un `HttpListener` de relleno en segundo plano y suéltalo después.
+
+## Navegador con sesión
+
+Si hay que manejar una web que pide iniciar sesión y «Claude in Chrome» no conecta (desde la extensión de VS Code no aparecieron sus herramientas, ni con `/chrome` ni con `@browser`):
+
+- abre un Chrome **aparte**, con `--remote-debugging-port=<puerto>` y `--user-data-dir=<perfil vacío propio>`; no toques el Chrome del usuario;
+- el usuario teclea su clave en esa ventana: tú no la ves ni la guardas;
+- manéjalo con `playwright-core` y `connectOverCDP`;
+- pide al usuario que no cierre esa ventana mientras trabajas.
+
+Funcionó a la primera. Si la web es una app de AGOIN en producción, sigue además `desarrollo-apps-agoin` («Usar una app en producción como usuario»).
 
 ## COM
 

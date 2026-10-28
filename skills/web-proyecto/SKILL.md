@@ -1,6 +1,8 @@
 ---
 name: web-proyecto
-description: "Cómo montar, publicar y mantener la web o visor de un proyecto para la promotora y las constructoras (modelo 3D enlazado a las partidas, planos, descargas PDF/DWG/IFC/BC3/Excel, imágenes) sin filtrar lo interno. Cubre qué es público y qué no, una interfaz clara que no pierde al usuario, caché por versión, pruebas en vivo, Docker con túnel de Cloudflare y el diagnóstico cuando «no carga». Úsala al crear, actualizar, desplegar o depurar la web de un proyecto o un visor 3D de mediciones."
+description: "[WEB] Cómo montar, publicar y mantener la web o visor de un proyecto para la promotora y las constructoras (modelo 3D enlazado a las partidas, planos, descargas PDF/DWG/IFC/BC3/Excel, imágenes) sin filtrar lo interno. Cubre qué es público y qué no, una interfaz clara que no pierde al usuario, caché por versión, pruebas en vivo, Docker con túnel de Cloudflare y el diagnóstico cuando «no carga». Úsala al crear, actualizar, desplegar o depurar la web de un proyecto o un visor 3D de mediciones, y la versión interna para revisar con notas."
+metadata:
+  etiquetas: "WEB"
 ---
 
 # Web del proyecto
@@ -40,19 +42,34 @@ Son buenos puntos de partida para otros proyectos; si el usuario pide otra cosa,
 - **Logotipo:** un dibujo sencillo de la fachada del edificio.
 - **Evita el aspecto de «hecho con IA»:** demasiadas cajas y tarjetas, tipografías de moda, numeraciones decorativas.
 
+## Versión interna para revisar
+
+El usuario pidió poder anotar en la propia web «y no tener que cambiarlo por el chat».
+
+- Al pinchar una partida, se puede pasar del 3D al plano de referencia y medir sobre el plano.
+- En cada partida se deja una nota («cuadra», «no cuadra» o «duda», con texto y marcas), que un servidor local guarda en un archivo con historial.
+- Se abre con un `.bat` de doble clic.
+- El usuario dice «revisa mis notas» y se aplican, cada una con su respuesta.
+
 ## Desplegar sin sorpresas
 
 - **Pon la versión en las URL de los scripts y los datos** (`app.js?v=…`), y haz que todas las peticiones pasen por una función que la añada. La caché del CDN mezcló un modelo viejo con datos nuevos.
+- **El script que monta el sitio borra la carpeta de salida antes de copiar.** `copytree(..., dirs_exist_ok=True)` deja archivos viejos, y en la web pública eso puede volver a publicar algo que ya quitaste.
 - **El servidor en vivo puede tener una CSP** (`script-src 'self'`) que el local no tiene. Nada de `<script>` en línea.
+- **El servidor local de pruebas tiene que admitir peticiones Range:** con `python -m http.server` el vídeo no avanza.
 - **Después de desplegar:**
   - prueba la URL pública con un navegador automatizado y lee los errores de consola;
+  - prueba también a ancho de móvil, y pulsando antes de que termine de cargar el modelo (salió un error null al pulsar una partida antes de tener el visor);
+  - con CSP, espera con `wait_for_selector` y no con `wait_for_function`, que evalúa código y la CSP lo bloquea;
   - mira las miniaturas generadas en una hoja de contactos, no solo el resultado de los tests;
   - justo tras desplegar, el primer archivo grande puede tardar (caché fría): vuelve a medir antes de buscar un fallo.
 - **Docker y túnel de Cloudflare:**
   - el token del túnel va solo en `.env`; nunca se imprime ni se sube al repositorio;
   - comprueba con qué cuenta de Cloudflare se creó el túnel: uno de otra cuenta da error 1033;
+  - si al enrutar el DNS por nombre responde «Tunnel not found», usa el UUID del túnel;
   - no toques otros proyectos de Docker del equipo ni puertos ya usados; pregunta cuáles están libres.
 - **No subas documentos del proyecto a servicios de alojamiento externos** sin que el usuario lo pida.
+- **Si el usuario pide una copia en claude.ai (artifact):** no admite `.bin` (pásalo a base64 en un .txt), acepta como mucho 255 archivos y 64 MB por publicación y no permite descargas. Sube solo lo ligero.
 
 ## «No carga en la oficina»
 

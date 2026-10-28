@@ -9,7 +9,9 @@ Pasos para crear una skill nueva:
 ```markdown
 ---
 name: <nombre-en-minusculas-con-guiones>
-description: <Qué hace, en una frase.> <Cuándo usarla: tareas, palabras y situaciones en que debe cargarse, aunque el usuario no la nombre.> (máximo unos 1.000 caracteres)
+description: "[<ETIQUETA>] <Qué hace, en una frase.> <Cuándo usarla: tareas, palabras y situaciones en que debe cargarse, aunque el usuario no la nombre.> (máximo unos 1.000 caracteres; entre comillas si lleva «: »)"
+metadata:
+  etiquetas: "<ETIQUETA>"
 ---
 
 # <Título>
@@ -43,6 +45,7 @@ description: <Qué hace, en una frase.> <Cuándo usarla: tareas, palabras y situ
 
 - [ ] Sirve para cualquier proyecto, no solo para uno.
 - [ ] Cada regla lleva su porqué.
+- [ ] Lleva su etiqueta (tabla del README) en la `description` y en `metadata.etiquetas`.
 - [ ] No hay contraseñas, tokens, precios ni datos personales.
 - [ ] No contradice otra skill del repositorio.
 - [ ] La has probado en una sesión nueva.

@@ -1,12 +1,21 @@
 ---
 name: acotar-planos
-description: Cómo acotar plantas de arquitectura de forma limpia y normalizada (cadenas exteriores por fachada, ejes junto a las burbujas, luces libres interiores, sin cifras superpuestas), y cómo hacerlo en Revit por API/Dynamo con referencias al modelo. Usar cuando se pida acotar o reacotar una planta, revisar un plano de acotación "sucio" o con cotas superpuestas, o preparar una hoja de cotas tipo proyecto de ejecución.
+description: "[PLANOS · REVIT] Cómo acotar plantas de arquitectura de forma limpia y normalizada (cadenas exteriores por fachada, ejes junto a las burbujas, luces libres interiores, sin cifras superpuestas), y cómo hacerlo en Revit por API/Dynamo con referencias al modelo. Usar cuando se pida acotar o reacotar una planta, revisar un plano de acotación \"sucio\" o con cotas superpuestas, o preparar una hoja de cotas tipo proyecto de ejecución."
+metadata:
+  etiquetas: "PLANOS, REVIT"
 ---
 
 # Acotar plantas de arquitectura
 
 Fuentes: AIA, *The lost art of dimensioning*; práctica de la UNE-EN ISO 129-1 (representación de cotas). La meta es que
 cada medida se lea una vez, sin buscarla y sin ambigüedad: menos cadenas, mejor ordenadas.
+
+**Limpiar no es quitar.** El plano de cotas tiene que seguir sirviendo para replantear. Si hay un plano de referencia
+(el visado), **mandan sus cadenas y sus referencias** (cara exterior de la medianera, rehundidos), medidas en el modelo:
+las reglas de este apartado sirven para recolocar y ordenar, no para quitar cotas que la referencia tiene. En ALFERECES,
+al «limpiar» una planta quedaron 159 cotas frente a las 300 del visado: sin acotar el portal, los cuartos técnicos,
+baños, cocinas, escaleras ni el hueco del ascensor, y con cadenas medidas desde otra referencia que daban otras cifras
+sin ninguna nota. Hubo que rehacerla.
 
 ## 1. Reglas de dibujo (valen para cualquier programa)
 
@@ -22,16 +31,18 @@ cada medida se lea una vez, sin buscarla y sin ambigüedad: menos cadenas, mejor
 3. **Ejes**: no se repiten fachada a fachada. Va una cadena por cada familia de ejes paralelos, **junto a las burbujas**, fuera de todo el edificio. Las burbujas van más allá de la última cadena.
 - La fachada de menos de 1,5 m, o sin huecos ni quiebros, lleva solo el total, o nada si otra cadena ya lo mide.
 - Si una cadena cruza el edificio o otra cadena, se quita la de la fachada más corta.
+- Chaflanes y fachadas oblicuas: cotas alineadas a su paño, y el ángulo con su arco; nunca diagonales a puntos cualesquiera.
 
 **Interior**
 - Luz libre de cada estancia en sus dos direcciones principales, "en cruz" (las dos líneas de la misma estancia pueden cruzarse entre sí y con nada más).
 - A unos 0,6 m del muro, donde la medida se repite (la luz modal), no en un rincón atípico.
-- No se acotan las escaleras (tienen su propio detalle) ni los huecos de menos de 0,8 m².
+- No se acotan las escaleras (tienen su propio detalle) ni los huecos de menos de 0,8 m², salvo que el plano de referencia los acote.
+- Ningún recinto se queda sin acotar: portal, cuartos de instalaciones, armarios de contadores, patio, terraza, baños, cocinas, hueco del ascensor.
 
 **Separaciones en papel** (a 1:100: 1 mm = 0,10 m)
 - Primera cadena a 4,5 mm de la cara más saliente de la fachada; entre cadenas, 3,5 mm (2,5 mm libres entre cifras de 1 mm).
 - Líneas de referencia de largo fijo (2,4 mm), separadas 0,75 mm del elemento.
-- Cifras a 0,6 mm sobre la línea, con fondo opaco.
+- Cifras a 0,6 mm sobre la línea, con fondo opaco. Si la hoja se llena de recuadros blancos, velo blanco al 50 % (ver `planos-laminas`).
 
 **Limpieza: lo que hace un plano "sucio"**
 - Ninguna cifra toca otra línea, otra cifra, una etiqueta, una cota de nivel, un símbolo ni el título de la vista.
@@ -48,6 +59,7 @@ cada medida se lea una vez, sin buscarla y sin ambigüedad: menos cadenas, mejor
 ## 2. Comprobación antes de dar el plano por bueno
 
 1. Exportar la hoja a PDF y mirar cada planta ampliada (≥ 200 ppp), no solo la vista general.
+   - Contar las cotas de cada planta y compararlas con las del plano de referencia. En rehabilitación con un levantamiento acotado, contarlas antes y después de cada cambio: si bajan, redibujar las perdidas.
 2. Recorrer: esquinas de las cadenas, extremos con tramos pequeños, burbujas, cotas de nivel, título de la vista.
 3. Compararla con el plano de referencia: las mismas cadenas de ejes con las mismas cifras en todas las plantas.
 4. Si se movió un recorte, comprobar en el PDF que el dibujo no se ha desplazado en la hoja (comparar posiciones de textos fijos).

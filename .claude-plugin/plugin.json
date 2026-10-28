@@ -1,7 +1,7 @@
 {
   "name": "agoin",
-  "description": "Skills de AGOIN: criterios de trabajo del estudio y procedimientos probados para proyectos de arquitectura (Revit, mediciones, planos, instalaciones, estructura, informes, web, vídeo) y para sus apps.",
-  "version": "1.0.1",
+  "description": "Skills de AGOIN, etiquetadas por tema: cómo trabaja el estudio, su libro de estilo y procedimientos probados para proyectos de arquitectura (Revit, mediciones, planos, rehabilitación, instalaciones, estructura con Robot, informes, web, vídeo con Blender), para trabajar de forma eficiente y para sus apps.",
+  "version": "1.1.0",
   "author": {
     "name": "AGOIN"
   }

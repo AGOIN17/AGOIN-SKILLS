@@ -94,6 +94,11 @@ D:\ARQ\<PROYECTO>\
 Equivalencia con ALFERECES: `00_BASE` son los `BLAL_*.pdf`, el `.bc3` y el `.rvt` original de la raíz; `02_MODELO` es
 `TRABAJO_REVIT_PE2026`; `03_MEDICIONES` es `TRABAJO_MEDICIONES`; `04_SEGUIMIENTO` es `SEGUIMIENTO_MEDICIONES`; `05_WEB` es `WEB`.
 
+**Variante que funcionó en CHIVERO** (rehabilitación, sobre todo trabajo en Revit): una carpeta `TRABAJO_REVIT\` con
+`00_PLAN.md` (un único archivo de plan que se lee lo primero), `datos\`, `dynamo\`, `scripts\`, `capturas\`,
+`referencias\copias\` (copias del libro de estilo, plantillas y proyectos modelo del estudio) y `copias_seguridad\`.
+Las dos sirven: lo que importa es que lo original quede aparte y que haya un archivo de contexto al día.
+
 Tres reglas de la estructura:
 
 - **Lo original no se toca.** Se trabaja sobre copias; el original queda como testigo para comparar.
@@ -108,7 +113,10 @@ Tres reglas de la estructura:
 
 1. **Leer todo antes de modelar.** Planos, memoria, presupuesto y cambios. Anotar las contradicciones entre documentos: suele
    haberlas entre arquitectura y estructura, entre planos y presupuesto, y entre la memoria y los dos.
-2. **Poner el modelo al día** del proyecto de ejecución y de los cambios, planta a planta, comparando con el PDF.
+2. **Poner el modelo al día** del proyecto de ejecución y de los cambios, planta a planta, comparando con el PDF. Por fases,
+   cada una con su ficha de diferencias en `fichas/`: F0 inventario y preguntas; F1 niveles y ejes; F2 tipos; F3 planta a
+   planta; F4 cubierta, escaleras y ascensor; F6 láminas; F7 revisión. Las dudas van numeradas en una sola lista, que el
+   usuario contesta con «sí a todo salvo…». Cada planta se aprueba antes de pasar a la siguiente (ver `revision-modelo-bim`).
 3. **Sacar las láminas** del modelo y compararlas con las del proyecto.
 4. **Modelar las instalaciones** en un modelo aparte, disciplina a disciplina, con comprobación de choques.
 5. **Revisar el presupuesto** partida a partida (apartado 5).
@@ -210,6 +218,18 @@ Son las indicaciones que el usuario ha ido dando. Valen para cualquier proyecto 
 6. ¿Quién va a ver cada entregable y qué no debe ver?
 7. ¿Qué productos están ya decididos (marcas, modelos) y cuáles quedan «o equivalente»?
 8. ¿Se quiere web? ¿Con qué dominio y abierta a quién?
+9. ¿Qué hará la promotora con el edificio, venderlo o alquilarlo? ¿Con qué alcance se entrega cada unidad (local en bruto o
+   con solado y techo; vivienda con cocina amueblada, con o sin electrodomésticos)? Las respuestas cambiaron el presupuesto.
+10. ¿Cuál es la fecha de la licencia? Si el proyecto se redactó hace años, revisa la normativa aparecida desde entonces
+    (ver la skill `comprobar-normativa`).
+11. ¿En qué formato se imprimen los planos (A1 o A3)? ¿Dónde están el libro de estilo y las plantillas del estudio?
+
+**En rehabilitación, además:**
+
+12. ¿Qué manda, el levantamiento o los planos 2D?
+13. ¿Qué fases hay y en qué orden se ejecutan?
+14. ¿Qué es necesario y qué es extra?
+15. ¿Cómo decide el cliente? (hojas A3 de decisión: ver la skill `decisiones-cliente`)
 
 ---
 

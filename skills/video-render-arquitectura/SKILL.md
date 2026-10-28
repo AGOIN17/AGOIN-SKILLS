@@ -1,6 +1,8 @@
 ---
 name: video-render-arquitectura
-description: "Cómo hacer vídeos de construcción (4D), animaciones, imágenes y portadas de un proyecto de arquitectura a partir del modelo (Revit → Blender) con el gusto del estudio. Cubre el estilo «dibujo de concurso», plano y casi monocromo, sin figuras humanas; una cámara que siempre deja ver lo que se coloca; una secuencia de obra real; fidelidad a los planos sin parpadeos; y fotos de estancias con criterio de fotografía inmobiliaria. Úsala al preparar o corregir vídeos, renders, imágenes o portadas de un proyecto, o cuando el usuario señale algo raro en un vídeo."
+description: "[BLENDER] Cómo hacer vídeos de construcción (4D), animaciones, imágenes y portadas de un proyecto de arquitectura a partir del modelo (Revit → Blender) con el gusto del estudio. Cubre el estilo «dibujo de concurso», plano y casi monocromo, sin figuras humanas; una cámara que siempre deja ver lo que se coloca; una secuencia de obra real; fidelidad a los planos sin parpadeos; y fotos de estancias con criterio de fotografía inmobiliaria. Úsala al preparar o corregir vídeos, renders, imágenes o portadas de un proyecto, o cuando el usuario señale algo raro en un vídeo."
+metadata:
+  etiquetas: "BLENDER"
 ---
 
 # Vídeo e imágenes del proyecto
@@ -45,7 +47,13 @@ El usuario compara el vídeo con los planos y ve enseguida los fallos: un ladril
 - **Estilo dibujo, trampas conocidas:**
   - un filtro de Sobel sobre la profundidad marca los planos rasantes: usa el laplaciano, solo del lado lejano;
   - los identificadores de cryptomatte llegan a 1e37: compara ln|id|;
-  - la luz física no da interiores planos en un corte: compón pasadas (color difuso × sombra u oclusión suaves + emisión).
+  - la luz física no da interiores planos en un corte: compón pasadas (color difuso × sombra u oclusión suaves + emisión);
+  - apaga las sombras de las luces interiores: no se ven y multiplicaban por diez el tiempo de cada fotograma (de 51 s a 5 s).
+- **Trampas de Blender 4.4:**
+  - con las acciones por «slots», la curva de `ortho_scale` no se puede tocar: crea una acción aparte;
+  - un material nuevo puede no traer el nodo «Principled BSDF»: crea los nodos tú;
+  - el Python de Blender no trae PIL: genera esas imágenes con el Python del sistema.
+- **No renderices fotos y vídeo a la vez en la misma tarjeta gráfica:** el vídeo se arrastró mientras se hacían las fotos.
 - **Antes del render completo,** saca cinco fotogramas de prueba y míralos tú.
 
 ## Fotos de estancias (tipo inmobiliaria)
@@ -64,4 +72,8 @@ El usuario compara el vídeo con los planos y ve enseguida los fallos: un ladril
   4. haz el render, de forma que se pueda reanudar;
   5. monta el vídeo.
 - **Un render completo puede llevar horas.** Avisa del tiempo antes, y no lo lances sin que el usuario lo quiera.
+- **Numera los fotogramas con ceros a la izquierda y ordénalos por número:** ordenado como texto, s_10006 va antes que s_1006, y el short salió con los fotogramas del final en medio.
+- **No identifiques una toma por su número de fotograma** de una versión a otra: el plan de obra cambia de duración. Búscala por su tarea o su nombre. La portada de la web salió con otra cámara porque el plan nuevo tenía 109 fotogramas más.
+- **Con vídeos de casi 1 GB, ofrece de entrada una copia ligera:** unos 200 MB, y otra de menos de 30 MB a 1280 px para mensajería.
+- **Escribe el vídeo final con un nombre temporal y renómbralo al terminar:** el usuario puede tener abierto el anterior en el reproductor.
 - **No publiques un vídeo que ya no corresponde al modelo.** El usuario prefirió quitarlo de la web hasta rehacerlo.

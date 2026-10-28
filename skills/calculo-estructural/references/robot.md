@@ -21,6 +21,11 @@ Probado con Robot Structural Analysis Professional 2027 en español, octubre de 
   - `I_BST_NS_RECT` es hueca. Para una sección maciza, pon el espesor = min(B, H)/2 con `ShapeType = I_BSST_DRECT`.
   - `I_BST_SPECIAL` ignora lo que se le pasa con `SetValue`.
 - **Materiales:** comprueba el peso propio que resulta. Un material genérico dio unas 10 veces menos que el real.
+  - Usa el nombre exacto de la base de la norma activa («HA - 25» con la EHE). Un nombre que no existe («C25/30» con la EHE) no da error, pero manda las reacciones a grados de libertad bloqueados.
+- **Después de borrar o cambiar casos,** los resultados pasan a «no actuales»: recalcula antes de leerlos.
+- **Nombres de la API que confunden:** es `CreateContour`, no `CreatePolyliner`; `Objects.Get` devuelve `IRobotDataObject` y hay que convertirlo con `CastTo`.
+- **`MakeScreenCapture` no existe en Robot 2027:** no habrá imagen de Robot por esa vía. Dilo en vez de reintentar, o usa `PrintEngine` (abajo).
+- **Instancia propia:** abre tu Robot para calcular variantes; no uses el que tenga abierto el usuario.
 - **Liberaciones en extremos de barra:** etiqueta `I_LT_BAR_RELEASE`. `I_BERV_STD` libera el grado de libertad; `I_BERV_NONE` lo deja fijo.
 - **Pandeo:** la API de Python no da sus resultados. Comprueba los arriostramientos con un caso de carga unitaria.
 - **Análisis lineal:** calcula casos simples y combínalos en Python.
@@ -55,6 +60,7 @@ Probado con Robot Structural Analysis Professional 2027 en español, octubre de 
 - **Despegue:** exige que la resultante quede en el núcleo central en ELU (s = eB/B + eL/L ≤ 1/6).
 - **Cortante:** lo comprueba sin armadura transversal, así que falla donde una propuesta con cercos sí cumple. Explícalo, no lo escondas.
 - **Plano:** solo dibuja el armado si la zapata pasa todas sus comprobaciones. Ese armado es el suyo (mínimos), no el de tu propuesta.
+- **El fuste 1 es el nudo de número más bajo:** gira la zapata 180° si hace falta para que coincida con tu numeración.
 - **Cargas de zapatas combinadas:**
   - cada pilar importado con `CreateFromNodes` queda como un grupo de cargas aparte;
   - suma la N del segundo pilar a los registros del primer grupo (fuste 2) y borra el segundo grupo.
