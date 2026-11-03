@@ -210,6 +210,7 @@ Estas reglas salen de correcciones reales. Cada una lleva su porqué, para aplic
 | REVIT | Revit por API o Dynamo | `revit-automatizacion` |
 | REVIT | Revisar el modelo antes de enseñarlo | `revision-modelo-bim` |
 | PLANOS | Planos y láminas, leer PDF de planos | `planos-laminas` |
+| PLANOS · PROYECTO | Juego completo para licitar: planos por oficios, fichas, memoria de patrimonio, mediciones y pliego coordinados | `proyecto-ejecucion-licitacion` |
 | PLANOS | Acotar plantas | `acotar-planos` |
 | INSTALACIONES | Instalaciones | `instalaciones-mep` |
 | ROBOT | Estructura, cimentación, Robot | `calculo-estructural` |

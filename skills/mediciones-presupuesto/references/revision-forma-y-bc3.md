@@ -16,7 +16,10 @@ Un script que tarda segundos. Se pasa siempre después de regenerar mediciones, 
 - resúmenes repetidos;
 - desgloses escritos en el texto que no suman la cantidad;
 - palabras testigo de anotaciones internas en el ciego;
-- precios en el ciego.
+- precios en el ciego;
+- **descompuestos (`~D`) o restos de una base de precios en el ciego,** como mano de obra, `%CI` o rendimientos. Un proyecto ajeno dejó 17 partidas así;
+- **remisiones a otra partida por su número** («ver 04.04.02») que, tras renumerar, apuntan a otra cosa. Cita las partidas por su nombre o regenera la remisión;
+- **códigos de lámina citados en los textos que no existen en el índice de planos.** En el mismo proyecto, las partidas decían «CC MCE 01» y el plano «CO MCE 01».
 
 Esta revisión es de **forma**. «0 incidencias» no dice nada de si las mediciones están bien: dilo así al entregarla.
 
@@ -27,4 +30,5 @@ Esta revisión es de **forma**. «0 incidencias» no dice nada de si las medicio
   - Sin caracteres que CP1252 no tenga: superíndices, «≈». Escribe «1·10^-11»; Presto mostraba «1·10?¹¹».
 - **Líneas de medición `~M`.** Una línea sin dimensiones lleva su valor en UNIDADES; si no, vale 1.
 - **Convención de las líneas en el texto,** para que un script las lea: tras la palabra «Medición:», cada pieza con su valor separada por «;» y al final «Total». Emítelas en `~M` solo si suman la cantidad.
+- **Nada de «|» dentro de un texto.** Es el separador de campos del FIEBDC: un nombre como «DEMOLICIONES | DESMONTADOS» desplaza la unidad y el precio en un lector estricto. Usa «/» o una coma.
 - **Prueba final:** importar en Presto y mirar una partida con tildes («cimentación») y su tabla de mediciones. Si no tienes Presto, pide al usuario que lo haga y dile exactamente qué mirar.

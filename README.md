@@ -63,6 +63,7 @@ Cada skill lleva una o dos etiquetas. Se ven al principio de su descripción (po
 |---|---|
 | `planos-laminas` | Producir y comprobar láminas con calidad de proyecto de ejecución, y leer planos PDF vectoriales. |
 | `acotar-planos` | Acotar plantas limpias y normalizadas, y cómo hacerlo en Revit. |
+| `proyecto-ejecucion-licitacion` | [PLANOS · PROYECTO] Juego completo de un proyecto de ejecución para licitar, sobre todo en patrimonio: planos por oficios, leyendas con cantidad, fichas de baños y de elementos existentes, memoria en tres estados, mediciones y pliego coordinados, y lista de errores que buscar antes de enviar. Sale del análisis de un proyecto de referencia de otro estudio (rehabilitación de un BIC, 2025). |
 
 ### INSTALACIONES · ROBOT · BLENDER · WEB
 
@@ -164,5 +165,12 @@ La plantilla está en [docs/plantilla-skill.md](docs/plantilla-skill.md).
 
 - **1.0 (27/10/2026):** las correcciones de la sesión principal del proyecto ALFERECES (modelo Revit, mediciones, instalaciones, cálculo con Robot, web y vídeo) y las memorias de otros proyectos del equipo (apps internas, Chivero, Trama3D y licitaciones).
 - **1.1 (28/10/2026):** etiquetas en todas las skills; lo aprendido en las demás sesiones de ALFERECES (revisión del presupuesto y del BC3, arranque del expediente) y en las sesiones de CHIVERO (libro de estilo, decisiones del cliente, rehabilitación sobre levantamiento, Revit con fases y nube de puntos); y cinco skills nuevas: `libro-estilo-agoin`, `decisiones-cliente`, `rehabilitacion-levantamiento`, `comprobar-normativa` y `optimizar-trabajo`.
-
-`acotar-planos` ya existía antes del repositorio. En la 1.1 solo se le añadieron la etiqueta y lo que enseñó la acotación de ALFERECES (cuando hay plano de referencia, mandan sus cadenas; contar las cotas).
+  - `acotar-planos` ya existía antes del repositorio. En la 1.1 solo se le añadieron la etiqueta y lo que enseñó la acotación de ALFERECES (cuando hay plano de referencia, mandan sus cadenas; contar las cotas).
+- **1.2 (03/11/2026):** skill nueva `proyecto-ejecucion-licitacion`, sacada del análisis de un proyecto ajeno que el usuario puso como ejemplo.
+  - Es un proyecto de ejecución para licitar la rehabilitación de un BIC (2025): 82 láminas, memoria, mediciones, BC3, pliego y anexo histórico.
+  - Va anonimizado porque su pliego exige confidencialidad.
+  - De lo bueno se sacan reglas; de lo malo, comprobaciones.
+  - Además se añadieron unas líneas a skills que ya existían, sin cambiar sus reglas:
+    - `planos-laminas`: sumar los cuadros y compararlos con la memoria;
+    - `mediciones-presupuesto`: el «|» en el BC3, los descompuestos que quedan en el ciego, las remisiones a partidas por número y los códigos de lámina citados;
+    - `agoin-forma-de-trabajar`: la nueva fila en la tabla de skills.

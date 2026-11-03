@@ -74,7 +74,11 @@ Criterio usado en ALFERECES, pendiente de que el usuario lo confirme:
    - nada queda fuera del marco y ninguna vista está vacía;
    - **el reparto de grosores de trazo:** si casi todo sale con el mismo grosor, se ha perdido la jerarquía;
    - **no hay trazos ni rellenos de color en láminas en blanco y negro** (la lana salía en amarillo por el patrón del material);
-   - **la escala rotulada y la versión del cajetín coinciden con el dibujo** (una lámina decía 1:100 y estaba a 1:25).
+   - **la escala rotulada y la versión del cajetín coinciden con el dibujo** (una lámina decía 1:100 y estaba a 1:25);
+   - **cada cuadro suma bien y da lo mismo que la memoria y las mediciones.**
+     - Comprueba superficies, cantidades de leyenda y parcela.
+     - En un proyecto ajeno muy cuidado, el cuadro reformado declaraba 418,28 m² y sus filas sumaban 630,55.
+     - Para un juego que se licita, pasa además la lista de `proyecto-ejecucion-licitacion`.
 3. **Compara con el juego anterior, píxel a píxel.** Solo debe cambiar lo que has cambiado. Ojo con tres efectos:
    - los muros editados desplazan sus huecos;
    - las plantillas cambiadas vuelven a mostrar elementos ocultos;
