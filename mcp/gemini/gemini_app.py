@@ -24,6 +24,15 @@ Lecciones de la primera prueba (09/11/2026):
   restaurar fuera de pantalla con SetWindowPlacement (la recoloca): se
   restaura y se mueve con SetWindowPos en el mismo instante.
 - HWND_TOPMOST (-1) hay que pasarlo como HWND: como int de 32 bits falla.
+- Idiomas (comprobado el 09/11/2026 con la app en inglés y la web en español):
+  los nombres de los botones cambian con el idioma de la cuenta de Google. Por
+  eso se usan señales que no dependen de él: clases (ql-editor, etiquetas de
+  respuesta), la fila de botones de la respuesta (solo aparece al terminar),
+  el botón de enviar (aparece al subir un adjunto), el enlace de «conversación
+  nueva» por su URL y el nombre del modelo (Flash/Pro). En español el menú
+  «Mostrar más opciones» NO ofrece «Rehacer con Pro».
+- La barra superior nativa de la app tiene su propio «Menú principal»
+  (automation_id «btn-menu»): no es el de la página y se ignora.
 - El selector de modo («Open mode picker, currently ...») ofrece 3.5 Flash-Lite,
   3.6 Flash, 3.1 Pro y 4 Argon. Cada imagen tiene «Show more options» →
   «Redo with Pro». La URL del chat sale del ValuePattern del documento y los
@@ -32,24 +41,28 @@ Lecciones de la primera prueba (09/11/2026):
 import subprocess
 import ctypes
 import os
+import re
 import time
 from ctypes import wintypes
 
 import psutil
-from pywinauto import Desktop
 from pywinauto.uia_defines import get_elem_interface
 
 APP_DIR = os.path.join(os.environ["LOCALAPPDATA"], "Google", "Gemini").lower()
 
-# La interfaz puede estar en inglés o en español.
-N_NEW_CHAT = {"New Chat", "New chat", "Nuevo chat", "Chat nuevo"}
+# Nombres en inglés y en español. Los marcados «sin ver» son traducciones
+# probables: si fallan, la herramienta «diagnostico» enseña los reales.
+N_NEW_CHAT = {"New Chat", "New chat", "Nueva conversación", "Nuevo chat", "Chat nuevo"}
 N_SEND = {"Send message", "Enviar mensaje"}
-N_STOP = {"Stop response", "Detener respuesta", "Stop", "Detener"}
-N_UPLOAD = {"Upload & tools", "Subir y herramientas", "Subir archivos y herramientas"}
-N_UPLOAD_FILES = {"Files", "Archivos", "Upload files", "Subir archivos"}
-N_TEMP = {"Temporary chat", "Chat temporal"}
+N_STOP = {"Stop response", "Stop", "Detener respuesta", "Detener la respuesta", "Detener"}  # ES sin ver
+N_UPLOAD = {"Upload & tools", "Subidas y herramientas"}
+N_UPLOAD_FILES = {"Files", "Archivos", "Upload files", "Subir archivos"}  # + «Subir archivos. …»
+N_TEMP = {"Temporary chat", "Chat temporal", "Conversación temporal"}  # ES sin ver
 N_CLOSE_SIDEBAR = {"Close sidebar", "Cerrar barra lateral"}
 N_MAIN_MENU = {"Main menu", "Menú principal"}
+N_MORE = {"Show more options", "Mostrar más opciones", "More options", "Más opciones"}
+N_PICKER = ("Open mode picker", "Abrir selector de modo")
+NATIVE_IDS = {"btn-menu"}  # botones de la barra nativa de la app, no de la página
 CLS_RESPONSE_LABEL = "screen-reader-model-response-label"
 CLS_EDITOR = "ql-editor"
 
@@ -60,22 +73,56 @@ class GeminiError(RuntimeError):
 
 # --------------------------------------------------------------- ventana
 
+def _top_windows(cls, pid=None, exe_prefix=None):
+    """Ventanas de primer nivel por clase y proceso con EnumWindows.
+
+    No se usa Desktop().windows(): pregunta por UIA a todas las ventanas y una
+    colgada (la Configuración de Windows, 09/11/2026) lo bloqueó minutos y
+    acabó diciendo que Gemini no estaba abierta."""
+    u32 = ctypes.windll.user32
+    found = []
+    proto = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+
+    def cb(h, _):
+        buf = ctypes.create_unicode_buffer(64)
+        u32.GetClassNameW(h, buf, 64)
+        if buf.value != cls:
+            return True
+        p = wintypes.DWORD()
+        u32.GetWindowThreadProcessId(h, ctypes.byref(p))
+        if pid is not None and p.value != pid:
+            return True
+        if exe_prefix is not None:
+            try:
+                if not psutil.Process(p.value).exe().lower().startswith(exe_prefix):
+                    return True
+            except Exception:
+                return True
+        t = ctypes.create_unicode_buffer(256)
+        u32.GetWindowTextW(h, t, 256)
+        found.append((h, t.value))
+        return True
+
+    u32.EnumWindows(proto(cb), 0)
+    return found
+
+
+def _wrap(hwnd):
+    """Envoltorio UIA de una ventana concreta (ElementFromHandle, sin recorrer el escritorio)."""
+    from pywinauto.controls.uiawrapper import UIAWrapper
+    from pywinauto.uia_element_info import UIAElementInfo
+    return UIAWrapper(UIAElementInfo(hwnd))
+
+
 def find_window():
     """Ventana principal de la app de Gemini (no la de Chrome ni la PWA)."""
-    best = None
-    for w in Desktop(backend="uia").windows(class_name="Chrome_WidgetWin_1"):
-        try:
-            exe = psutil.Process(w.process_id()).exe().lower()
-        except Exception:
-            continue
-        if not exe.startswith(APP_DIR):
-            continue
-        if w.window_text() == "Gemini":
-            return w
-        best = best or w
-    if best is None:
+    wins = _top_windows("Chrome_WidgetWin_1", exe_prefix=APP_DIR)
+    if not wins:
         raise GeminiError("La app de Gemini no está abierta.")
-    return best
+    main = [h for h, t in wins if t == "Gemini"] or [h for h, t in wins if t]
+    if not main:
+        raise GeminiError("La app de Gemini no tiene ventana principal (¿está en la bandeja del sistema?).")
+    return _wrap(main[0])
 
 
 def _descendants(root, **crit):
@@ -121,6 +168,13 @@ _u32.IsIconic.argtypes = [wintypes.HWND]
 _u32.MonitorFromPoint.argtypes = [wintypes.POINT, wintypes.DWORD]
 _u32.MonitorFromPoint.restype = wintypes.HANDLE
 _u32.GetMonitorInfoW.argtypes = [wintypes.HANDLE, ctypes.POINTER(_MI)]
+_k32 = ctypes.windll.kernel32
+_k32.CreateMutexW.argtypes = [ctypes.c_void_p, wintypes.BOOL, wintypes.LPCWSTR]
+_k32.CreateMutexW.restype = wintypes.HANDLE
+_k32.WaitForSingleObject.argtypes = [wintypes.HANDLE, wintypes.DWORD]
+_k32.WaitForSingleObject.restype = wintypes.DWORD
+_k32.ReleaseMutex.argtypes = [wintypes.HANDLE]
+_k32.CloseHandle.argtypes = [wintypes.HANDLE]
 
 
 def _placement(h):
@@ -183,10 +237,33 @@ class session:
         with session() as w: ...
     """
 
-    def __init__(self, hidden=True):
+    def __init__(self, hidden=True, wait_turn=900):
         self.hidden = hidden
+        self.wait_turn = wait_turn
+        self.mutex = None
 
     def __enter__(self):
+        # Turno entre procesos: varias sesiones de Claude Code pueden tener su propio
+        # servidor «gemini», y dos a la vez sobre la misma ventana se estorban.
+        self.mutex = _k32.CreateMutexW(None, False, "Local\\gemini-mcp-ventana")
+        r = _k32.WaitForSingleObject(self.mutex, int(self.wait_turn * 1000))
+        if r not in (0, 0x80):  # WAIT_OBJECT_0 o WAIT_ABANDONED (el anterior murió)
+            _k32.CloseHandle(self.mutex)
+            self.mutex = None
+            raise GeminiError(f"Otra sesión lleva más de {self.wait_turn} s usando la app de Gemini.")
+        try:
+            return self._enter()
+        except Exception:
+            self._release()
+            raise
+
+    def _release(self):
+        if self.mutex:
+            _k32.ReleaseMutex(self.mutex)
+            _k32.CloseHandle(self.mutex)
+            self.mutex = None
+
+    def _enter(self):
         self.w = ensure_window()
         h = self.w.handle
         self.was_min = bool(_u32.IsIconic(h))
@@ -222,12 +299,15 @@ class session:
         return self.w
 
     def __exit__(self, *exc):
-        h = self.w.handle
-        if self.parked:
-            _u32.SetWindowPos(h, _NOTOPMOST, 0, 0, 0, 0, _NOSIZE | _NOMOVE | _NOACTIVATE)
-        if self.was_min:
-            _u32.ShowWindow(h, SW_SHOWMINNOACTIVE)
-            _set_placement(h, self.normal, SW_SHOWMINNOACTIVE)
+        try:
+            h = self.w.handle
+            if self.parked:
+                _u32.SetWindowPos(h, _NOTOPMOST, 0, 0, 0, 0, _NOSIZE | _NOMOVE | _NOACTIVATE)
+            if self.was_min:
+                _u32.ShowWindow(h, SW_SHOWMINNOACTIVE)
+                _set_placement(h, self.normal, SW_SHOWMINNOACTIVE)
+        finally:
+            self._release()
         return False
 
 
@@ -258,7 +338,7 @@ def find_button(w, names, timeout=0.0):
     t0 = time.time()
     while True:
         for b in _descendants(w, control_type="Button"):
-            if (b.element_info.name or "").strip() in names:
+            if (b.element_info.name or "").strip() in names and b.element_info.automation_id not in NATIVE_IDS:
                 return b
         if time.time() - t0 >= timeout:
             return None
@@ -334,8 +414,9 @@ def response_container(label):
 # Líneas de botones y marcadores que no son texto de la respuesta.
 _NOISE = {"￼", "Gemini said", "Copy", "Good response", "Bad response", "Redo", "Share & export",
           "Show more options", "More options", "Copiar", "Buena respuesta", "Mala respuesta",
-          "Share image", "Copy image", "Download full size image",
-          "Compartir imagen", "Copiar imagen", "Descargar imagen a tamaño completo"}
+          "Share image", "Copy image", "Download full size image", "Gemini ha dicho",
+          "Compartir imagen", "Copiar imagen", "Descargar imagen a tamaño completo", "Rehacer",
+          "Mostrar más opciones", "Previous version", "Next version"}
 
 
 def last_response(w):
@@ -344,17 +425,31 @@ def last_response(w):
         return ""
     container = response_container(labels[-1])
     txt = _text_of(main_document(w), container)
+    noise = set(_NOISE) | {labels[-1].element_info.name or ""}
+    noise |= {(b.element_info.name or "").strip() for b in _descendants(container.parent(), control_type="Button")}
     lines = []
     for ln in txt.replace("\r", "").split("\n"):
-        s = ln.replace("￼", "").rstrip()
-        if s.strip() in _NOISE or s.startswith("View source details for citation"):
+        s = ln.replace("\ufffc", "").rstrip()
+        if s.strip() in noise or s.startswith(("View source details for citation", "Ver detalles de la fuente")):
             continue
         lines.append(s)
     return "\n".join(lines).strip()
 
 
+def response_has_actions(w):
+    """La fila de botones de la respuesta (copiar, rehacer…) solo aparece al terminar."""
+    labels = response_labels(w)
+    if not labels:
+        return False
+    block = response_container(labels[-1]).parent()
+    return sum(1 for b in _descendants(block, control_type="Button") if b.element_info.name) >= 2
+
+
 def is_generating(w):
-    return find_button(w, N_STOP) is not None
+    """Generando: botón de detener (EN/ES) o respuesta todavía sin su fila de botones."""
+    if find_button(w, N_STOP) is not None:
+        return True
+    return bool(response_labels(w)) and not response_has_actions(w)
 
 
 # --------------------------------------------------------------- acciones
@@ -366,24 +461,49 @@ def _chat_is_empty(w):
                    for t in _descendants(w, control_type="Text"))
 
 
-def new_chat(w, temporary=False):
+def new_chat(w, temporary=False, _retry=False):
     """Chat nuevo. Con temporary=True, chat temporal (no queda en el historial)."""
     close_sidebar(w, settle=0)
     if not _chat_is_empty(w):
-        b = find_button(w, N_NEW_CHAT, timeout=5)
-        if b is None:
-            raise GeminiError("No encuentro el botón «New Chat».")
-        press(b)
+        b = find_button(w, N_NEW_CHAT, timeout=3)
+        if b is not None:
+            press(b)
+        else:
+            _new_chat_via_sidebar(w)
         t0 = time.time()
         while not _chat_is_empty(w) and time.time() - t0 < 8:
             time.sleep(0.3)
     if temporary:
-        b = find_button(w, N_TEMP, timeout=5)
+        # Tras navegar, el botón tarda en aparecer (una sesión falló a la primera y fue bien al repetir).
+        b = find_button(w, N_TEMP, timeout=10)
+        if b is None and not _retry:
+            time.sleep(1.0)
+            return new_chat(w, temporary=True, _retry=True)
         if b is None:
-            raise GeminiError("No encuentro el botón «Temporary chat».")
+            raise GeminiError("No encuentro el botón de chat temporal (" + " / ".join(sorted(N_TEMP))
+                              + "). Usa la herramienta diagnostico para ver su nombre.")
         press(b)
         time.sleep(1.0)
     find_editor(w)
+
+
+def _new_chat_via_sidebar(w):
+    """Conversación nueva con el enlace de la barra lateral (se reconoce por su URL)."""
+    if find_button(w, N_CLOSE_SIDEBAR) is None:
+        mm = find_button(w, N_MAIN_MENU, timeout=3)
+        if mm is None:
+            raise GeminiError("No encuentro ni el botón de conversación nueva ni el menú principal.")
+        press(mm)
+        time.sleep(1.0)
+    for lk in _descendants(w, control_type="Hyperlink"):
+        try:
+            v = (lk.iface_value.CurrentValue or "").split("?")[0].rstrip("/")
+        except Exception:
+            continue
+        if re.fullmatch(r"https://gemini\.google\.com(/u/\d+)?/app", v):
+            press(lk)
+            return
+    raise GeminiError("No encuentro el enlace de conversación nueva en la barra lateral.")
 
 
 def set_prompt(w, text):
@@ -445,7 +565,7 @@ def wait_response(w, n_before, timeout=300, poll=1.0):
 def _picker(w):
     for b in _descendants(w, control_type="Button"):
         n = b.element_info.name or ""
-        if n.startswith(("Open mode picker", "Abrir selector de modo")):
+        if n.startswith(N_PICKER):
             return b
     raise GeminiError("No encuentro el selector de modo.")
 
@@ -457,12 +577,12 @@ def current_model(w):
 
 
 def _model_kind(text):
-    t = " " + text.lower()
-    if "argon" in t:
-        return "argon"
-    if "lite" in t:
-        return "lite"
-    return "pro" if " pro" in t else "flash"
+    """«flash», «pro», «lite» o «argon» según la primera palabra de modelo del texto
+    («3.6 Flash Ayuda completa», «Seleccionado 3.1 Pro…», «currently Flash High»)."""
+    m = re.search(r"\b(flash-lite|flash|pro|argon)\b", text.lower())
+    if not m:
+        return "?"
+    return {"flash-lite": "lite"}.get(m.group(1), m.group(1))
 
 
 def select_model(w, kind):
@@ -470,32 +590,53 @@ def select_model(w, kind):
     prev = current_model(w)
     if _model_kind(prev) == kind:
         return prev
-    pk = _picker(w)
-    press(pk)
-    t0, radios = time.time(), []
-    while not radios and time.time() - t0 < 6:
-        radios = _descendants(w, control_type="RadioButton")
-        time.sleep(0.2)
+
+    def radios_now():
+        return _descendants(w, control_type="RadioButton")
+
+    def wait_radios(t):
+        t0 = time.time()
+        while time.time() - t0 < t:
+            r = radios_now()
+            if r:
+                return r
+            time.sleep(0.2)
+        return []
+
     target = None
-    for r in radios:
-        n = (r.element_info.name or "").replace("Selected ", "")
-        if _model_kind(" ".join(n.split()[:2])) == kind:
-            target = r
+    for attempt in range(2):
+        radios = radios_now()  # ¿ya abierto?
+        if not radios:
+            press(_picker(w))
+            radios = wait_radios(4)
+        target = next((r for r in radios if _model_kind(r.element_info.name or "") == kind), None)
+        if target is not None:
             break
+        time.sleep(1.0)  # quizá se estaba cerrando: reintenta una vez
     if target is None:
-        press(pk)
+        _close_picker(w)
         raise GeminiError(f"No encuentro el modo «{kind}» en el selector.")
     press(target)
     t0 = time.time()
-    while time.time() - t0 < 6:
-        if _model_kind(current_model(w)) == kind:
-            break
+    while time.time() - t0 < 6 and _model_kind(current_model(w)) != kind:
         time.sleep(0.3)
-    if _descendants(w, control_type="RadioButton"):
-        press(_picker(w))  # cierra el selector si sigue abierto
+    _close_picker(w)
     if _model_kind(current_model(w)) != kind:
         raise GeminiError(f"No se ha podido cambiar al modo «{kind}».")
     return prev
+
+
+def _close_picker(w):
+    """Cierra el selector solo si sigue abierto tras su animación (si no, pulsarlo lo reabriría)."""
+    time.sleep(1.0)
+    if not _descendants(w, control_type="RadioButton"):
+        return
+    pk = _picker(w)
+    try:
+        pk.iface_expand_collapse.Collapse()
+    except Exception:
+        press(pk)
+    time.sleep(0.8)
 
 
 def close_sidebar(w, settle=1.5):
@@ -563,8 +704,7 @@ def redo_with_pro(w, timeout=600, poll=1.0):
     if not labels:
         raise GeminiError("El chat no tiene respuestas.")
     block = response_container(labels[-1]).parent()
-    more = [b for b in _descendants(block, control_type="Button")
-            if (b.element_info.name or "") in ("Show more options", "Más opciones", "More options")]
+    more = [b for b in _descendants(block, control_type="Button") if (b.element_info.name or "") in N_MORE]
     if not more:
         raise GeminiError("No encuentro «Show more options» en la respuesta.")
     before = _image_ids(w)
@@ -573,13 +713,14 @@ def redo_with_pro(w, timeout=600, poll=1.0):
     while item is None and time.time() - t0 < 6:
         for m in _descendants(w, control_type="MenuItem"):
             n = (m.element_info.name or "").lower()
-            if "redo with pro" in n or "rehacer con pro" in n:
+            if re.search(r"\b(redo|rehacer|regenerar|volver a generar)\b.*\bpro\b", n):
                 item = m
                 break
         time.sleep(0.2)
     if item is None:
         press(more[-1])
-        raise GeminiError("El menú no ofrece «Redo with Pro» (¿ya está hecha con Pro?).")
+        raise GeminiError("El menú no ofrece «Redo with Pro» (¿ya está hecha con Pro, o la app está "
+                          "en español, que no lo ofrece?).")
     press(item)
     t0, last, started = time.time(), None, False
     while time.time() - t0 < timeout:
@@ -587,6 +728,8 @@ def redo_with_pro(w, timeout=600, poll=1.0):
         if is_generating(w):
             started = True
             last = None
+            continue
+        if not response_has_actions(w):
             continue
         ids = _image_ids(w)
         if not ids or ids == before:
@@ -611,9 +754,8 @@ def _dialog(w, timeout=10):
         for d in _descendants(w, control_type="Window"):
             if d.element_info.class_name == "#32770":
                 return d
-        for d in Desktop(backend="uia").windows(class_name="#32770"):
-            if d.process_id() == pid:
-                return d
+        for h, _t in _top_windows("#32770", pid=pid):
+            return _wrap(h)
         if time.time() - t0 >= timeout:
             return None
         time.sleep(0.3)
@@ -699,14 +841,16 @@ def attachment_count(w):
     """Adjuntos en la caja (cada uno tiene su botón «close attachment»)."""
     return sum(1 for b in _descendants(w, control_type="Button")
                if any(k in (b.element_info.name or "").lower()
-                      for k in ("close attachment", "remove attachment", "quitar archivo", "eliminar archivo", "adjunto")))
+                      for k in ("close attachment", "remove attachment", "remove file", "quitar archivo",
+                                "eliminar archivo", "cerrar archivo", "adjunto")))
 
 
 def _wait_attachment(w, before, timeout):
     """Espera a que aparezca un adjunto más en la caja."""
     t0 = time.time()
     while time.time() - t0 < timeout:
-        if attachment_count(w) > before:
+        # Con la caja vacía, el botón de enviar solo aparece si hay un adjunto.
+        if attachment_count(w) > before or (before == 0 and find_button(w, N_SEND) is not None):
             time.sleep(1.0)
             return True
         time.sleep(0.5)
@@ -765,6 +909,29 @@ def _cancel_dialog(d):
         if b.element_info.automation_id == "2":
             press(b)
             return
+
+
+def diagnose(w):
+    """Nombres visibles (botones, menús, opciones) para ajustar los N_* si cambia la app o el idioma."""
+    out = {"chat": chat_url(w), "modelo": "", "editor": "", "botones": [], "menus": [], "opciones": []}
+    try:
+        out["modelo"] = current_model(w)
+    except GeminiError:
+        pass
+    try:
+        out["editor"] = find_editor(w, timeout=1).element_info.name
+    except GeminiError:
+        pass
+    seen = set()
+    for b in _descendants(w, control_type="Button"):
+        n = b.element_info.name or ""
+        if n and n not in seen and b.element_info.automation_id not in NATIVE_IDS \
+                and not n.startswith(("More options for", "Más opciones para")) and len(n) < 120:
+            seen.add(n)
+            out["botones"].append(n)
+    out["menus"] = [m.element_info.name for m in _descendants(w, control_type="MenuItem") if m.element_info.name]
+    out["opciones"] = [r.element_info.name for r in _descendants(w, control_type="RadioButton") if r.element_info.name]
+    return out
 
 
 # --------------------------------------------------------------- captura

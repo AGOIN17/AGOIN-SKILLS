@@ -58,6 +58,8 @@ Estas reglas evitan los dos.
 
 Lo aprendido al montar el MCP `gemini` (`mcp/gemini/gemini_app.py`), que maneja la app de Gemini para Windows sin ratón ni foco:
 
+- **No recorras el escritorio con `Desktop(backend="uia").windows()`.** Pregunta a todas las ventanas, y una colgada (la Configuración de Windows) lo bloqueó varios minutos y acabó diciendo que la app no estaba abierta. Busca con `EnumWindows` por clase y proceso, y envuelve solo esa ventana con `UIAWrapper(UIAElementInfo(hwnd))`.
+- **Los nombres de los botones cambian con el idioma de la cuenta.** Usa señales que no dependan de él (clases, URL de los enlaces, que aparezca o desaparezca un grupo de botones) y deja los nombres en inglés y en español solo como respaldo. Para ver los nombres reales en otro idioma sin tocar la cuenta, abre la web en una ventana aparte con `?hl=es`, con permiso del usuario.
 - **No fuerces el modo de depuración.** La app de Gemini se cierra si se arranca con `--remote-debugging-port`: es una protección, y no se salta. UI Automation, que es lo que usan los lectores de pantalla, sí vale.
 - **El árbol de la página aparece cuando un cliente lo pide.** La primera consulta puede devolver solo los botones de la barra de título: reintenta.
 - **Pulsar:** `Invoke`; los botones que abren menús, con `ExpandCollapse`; las opciones de radio, con `SelectionItem`. La caja de texto admite `ValuePattern.SetValue`.

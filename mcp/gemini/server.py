@@ -145,6 +145,12 @@ TOOLS = [
         "description": "Captura la ventana de la app de Gemini (para ver en qué estado está).",
         "inputSchema": {"type": "object", "properties": {}},
     },
+    {
+        "name": "diagnostico",
+        "description": "Lista lo que se ve en la app de Gemini (botones, menús, modelo, idioma). Úsalo si una "
+                       "herramienta no encuentra un botón: la app puede estar en otro idioma o haber cambiado.",
+        "inputSchema": {"type": "object", "properties": {}},
+    },
 ]
 
 
@@ -338,8 +344,17 @@ def job_captura(a, progress):
     return [_preview(path, max_side=1024)]
 
 
+def job_diagnostico(a, progress):
+    with g.session() as w:
+        d = g.diagnose(w)
+    es = any(n in d["botones"] for n in ("Enviar mensaje", "Subidas y herramientas", "Dictar (^⇧D)"))
+    en = any(n in d["botones"] for n in ("Send message", "Upload & tools", "Dictate (^⇧D)"))
+    d["idioma"] = "español" if es and not en else "inglés" if en and not es else "?"
+    return [_text(json.dumps(d, ensure_ascii=False, indent=1))]
+
+
 JOBS_FN = {"editar_imagen": job_editar, "mejorar_en_pro": job_pro, "preguntar": job_preguntar,
-           "leer_respuesta": job_leer, "captura": job_captura}
+           "leer_respuesta": job_leer, "captura": job_captura, "diagnostico": job_diagnostico}
 ASYNC_OK = {"editar_imagen", "mejorar_en_pro"}
 
 _ids = itertools.count(1)

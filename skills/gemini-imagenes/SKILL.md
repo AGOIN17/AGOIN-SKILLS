@@ -30,6 +30,7 @@ El MCP `gemini` (carpeta `mcp/gemini/` del repositorio) maneja la app de Gemini 
    - Guarda `<nombre>_gemini.jpg` y una ficha `.json` en `Descargas\Gemini`.
 2. **Enseña cada borrador al lado de su original** y deja que el usuario elija. Señala lo que haya cambiado.
 3. **Versión buena con Pro:** `mejorar_en_pro` solo con los borradores elegidos. Vuelve al chat de cada uno, pulsa «Redo with Pro» y guarda `<nombre>_gemini_pro.jpg`.
+   - Con la app en español no existe «Rehacer con Pro». Entonces el MCP repite la imagen con Pro desde la original y sale una imagen nueva, que puede alejarse del borrador. Díselo al usuario antes.
    - Pro gasta el cupo del plan del usuario: no lo uses para tantear.
    - En la prueba de noviembre de 2026, Pro dio **la misma resolución** que Flash (2572×1632), pero una imagen más limpia y fiel al modelo. No prometas más píxeles.
 4. **Compara la imagen final con el original y con los planos** antes de enseñarla. Márcala como orientativa (regla de `video-render-arquitectura`).
@@ -49,6 +50,7 @@ El MCP `gemini` (carpeta `mcp/gemini/` del repositorio) maneja la app de Gemini 
 
 ## Trampas conocidas
 
-- **Herramienta que no termina o falta un botón** → la ventana estaba minimizada del todo, tapada por la barra lateral o la app en otro idioma → el MCP ya trata los dos primeros casos. Para el idioma, revisa los nombres `N_*` de `gemini_app.py` (se probó con la app en inglés).
+- **Herramienta que no encuentra un botón** → la app ha cambiado o tiene un nombre que no está en las listas (inglés y español) → ejecuta `diagnostico` y ajusta los nombres `N_*` de `gemini_app.py`.
+- **Dos sesiones de Claude con el MCP a la vez** → usan la ventana por turnos: la segunda espera, hasta 15 minutos, a que acabe la primera. No es un cuelgue.
 - **El Gemini CLI ya no sirve con cuentas personales** (Google lo cerró en junio de 2026), y la API pide una clave de pago. Por eso el MCP maneja la app.
 - **«Falta una librería de Python»** → `python -m pip install -r mcp/gemini/requirements.txt` y reabrir Claude Code.

@@ -37,6 +37,7 @@ Usa solo una de las dos formas: con las dos, habría dos servidores manejando la
 | `preguntar` | Manda un texto y devuelve la respuesta. |
 | `leer_respuesta` | Lee la última respuesta del chat abierto. |
 | `captura` | Imagen de la ventana, para ver en qué estado está. |
+| `diagnostico` | Lista los botones, menús y el modelo que se ven, y el idioma. Sirve si una herramienta no encuentra un botón. |
 
 `editar_imagen` y `mejorar_en_pro` van en segundo plano por defecto: devuelven un número de trabajo y se consultan con `estado`.
 
@@ -46,5 +47,16 @@ Usa solo una de las dos formas: con las dos, habría dos servidores manejando la
 - **Ventana abierta:** trabaja a la vista. No uses la ventana de Gemini mientras trabaja.
 - **Nunca sobrescribe:** si el nombre existe guarda `_2`, `_3`… y, si Windows pregunta por reemplazar, contesta «No».
 - **Tiempos:** unos 45 s por borrador y unos 35 s por «Redo with Pro» (noviembre de 2026).
-- **Idioma:** se probó con la interfaz de la app en inglés. Los nombres en español de los botones están puestos, pero sin probar. Si falla con la app en español, revisa las constantes `N_*` de `gemini_app.py`.
-- **Cambios de la app:** si Google cambia la app, puede dejar de funcionar hasta que se ajusten esos nombres. Las trampas encontradas al montarlo están al principio de `gemini_app.py`.
+- **Inglés y español.** Los nombres de los botones dependen del idioma de la cuenta de Google. Por eso, donde se puede, usa señales que no dependen de él:
+  - termina cuando aparece la fila de botones de la respuesta;
+  - el adjunto está subido cuando aparece el botón de enviar;
+  - la conversación nueva se abre con su enlace, reconocido por la URL;
+  - el modelo se reconoce por la palabra «Flash» o «Pro».
+
+  Donde no se puede, lleva los nombres en los dos idiomas, leídos de la app real el 09/11/2026:
+  - en inglés se probó todo, de principio a fin;
+  - en español se probó sin enviar nada (chat temporal, cambio de modelo, menú de subir y botón de enviar).
+- **En español no existe «Rehacer con Pro».** La interfaz en español no ofrece esa opción. En ese caso, `mejorar_en_pro` repite la imagen con Pro desde la original: sale una imagen nueva, que puede parecerse menos al borrador elegido.
+- **Varias sesiones a la vez:** cada sesión de Claude Code tiene su propio servidor. Para que no se estorben, la ventana se usa por turnos: la segunda espera a que acabe la primera.
+- **Otros programas colgados no lo bloquean:** busca la ventana de Gemini directamente, sin preguntar a las demás.
+- **Cambios de la app:** si Google cambia la app y algo deja de encontrarse, `diagnostico` enseña los nombres reales para ajustar las constantes `N_*` de `gemini_app.py`. Las trampas encontradas al montarlo están al principio de ese archivo.

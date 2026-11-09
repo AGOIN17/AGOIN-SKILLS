@@ -190,3 +190,10 @@ La plantilla está en [docs/plantilla-skill.md](docs/plantilla-skill.md).
     - `automatizar-programas-windows`: apartado de apps Electron o Chromium (cuadros de archivo con `WM_CHAR`, ventana aparcada, `HWND_TOPMOST`);
     - `video-render-arquitectura`: remite a `gemini-imagenes`;
     - `agoin-forma-de-trabajar`: la nueva fila en la tabla de skills.
+- **1.3.1 (09/11/2026):** el MCP `gemini` funciona con la app en inglés y en español.
+  - Usa señales que no dependen del idioma; donde no se puede, lleva los nombres reales de los botones en los dos idiomas.
+  - En español no existe «Rehacer con Pro»: `mejorar_en_pro` repite la imagen con Pro desde la original.
+  - Herramienta nueva `diagnostico`.
+  - Turno entre sesiones, para que dos servidores no manejen la ventana a la vez.
+  - Ya no se bloquea si otro programa tiene una ventana colgada.
+  - `automatizar-programas-windows` gana dos trampas: no recorrer el escritorio con UIA y los nombres que cambian con el idioma.
