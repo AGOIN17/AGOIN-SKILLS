@@ -40,6 +40,7 @@ metadata:
   - `| Select-Object -First N` corta el comando que lo alimenta en cuanto llegan N objetos. Así se paró un servicio en producción.
   - `-Last N` espera a toda la salida.
   - En PowerShell 5.1, `Get-ScheduledTask` se cuelga: usa `schtasks.exe`.
+  - Un `powershell.exe` (5.1) lanzado desde PowerShell 7 hereda su `PSModulePath` y no carga módulos como `Microsoft.PowerShell.Security` («se encontró en el módulo, pero el módulo no pudo cargarse»). Así dejó de funcionar el conector de correo. Lánzalo quitando `PSModulePath` del entorno, o usa .NET directamente (por ejemplo `[System.Security.Cryptography.ProtectedData]` en lugar de `ConvertTo-SecureString`).
   - El COM desde PowerShell necesita la versión 5.1 con `-STA`.
   - En PowerShell 7, `ConvertFrom-Json` convierte las fechas ISO en DateTime, y la configuración española intercambia día y mes.
   - Las variables no distinguen mayúsculas: `$t` pisó a `$T`.

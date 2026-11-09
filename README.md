@@ -24,6 +24,7 @@ Cada skill lleva una o dos etiquetas. Se ven al principio de su descripción (po
 | OPTIMIZACIÓN | Trabajar rápido y barato: subagentes, procesos largos, cadenas de regeneración |
 | WINDOWS | Entorno de trabajo y manejo de programas y navegador |
 | APPS | Aplicaciones internas del estudio |
+| CORREO | El correo de agoin.es desde Claude |
 
 ## Qué hay
 
@@ -84,6 +85,12 @@ Cada skill lleva una o dos etiquetas. Se ven al principio de su descripción (po
 | `entorno-windows-agoin` | Trampas del entorno: servidor de solo lectura, rutas UNC, Git Bash, PowerShell, codificación, cuentas, disco y archivos bloqueados. |
 | `desarrollo-apps-agoin` | Apps internas: datos de producción, despliegues, Next.js, Firebase, Docker, integraciones, pruebas y usar una app en producción como usuario. |
 
+### CORREO
+
+| Skill | Para qué |
+|---|---|
+| `correo-agoin` | El correo de agoin.es con el MCP `correo-agoin`: buscar, leer y guardar adjuntos; enviar, responder, reenviar y borradores; marcar, mover, archivar y borrar. Nada se envía sin el visto bueno expreso; borrar va a la papelera. |
+
 ## Cómo instalarlas
 
 Usa **solo una** de las dos formas. Si usas las dos, cada skill aparece dos veces.
@@ -130,12 +137,19 @@ También se puede activar la actualización automática en `/plugin` › Marketp
 
 Si no se usa, no molesta: no carga nada hasta el primer encargo. Los detalles están en [mcp/gemini/README.md](mcp/gemini/README.md).
 
+**El MCP «correo-agoin».** También trae el conector del correo de agoin.es (lo usa la skill `correo-agoin`): buscar, leer, enviar, responder, reenviar, borradores, marcar, mover y borrar. Se registra solo; cada persona tiene que:
+
+- tener Node.js 20 o superior;
+- configurar su buzón una vez con `node <ruta>/mcp/correo/dist/correo-agoin.mjs --configurar`. Pide su correo, su nombre y su contraseña, y guarda la contraseña cifrada solo para su usuario de Windows. La ruta exacta la da el conector si se le llama sin configurar.
+
+Los detalles están en [mcp/correo/README.md](mcp/correo/README.md).
+
 ### B. Copiando carpetas
 
 1. Copia cada carpeta `skills/<nombre>/` a `%USERPROFILE%\.claude\skills\`.
 2. No copies la raíz del repositorio.
 3. Para actualizar, vuelve a copiarlas.
-4. El MCP «gemini» hay que registrarlo a mano: ver [mcp/gemini/README.md](mcp/gemini/README.md).
+4. Los MCP hay que registrarlos a mano: ver [mcp/gemini/README.md](mcp/gemini/README.md) y [mcp/correo/README.md](mcp/correo/README.md).
 
 ### Opcional: que las reglas generales se apliquen siempre
 
@@ -197,3 +211,9 @@ La plantilla está en [docs/plantilla-skill.md](docs/plantilla-skill.md).
   - Turno entre sesiones, para que dos servidores no manejen la ventana a la vez.
   - Ya no se bloquea si otro programa tiene una ventana colgada.
   - `automatizar-programas-windows` gana dos trampas: no recorrer el escritorio con UIA y los nombres que cambian con el idioma.
+- **1.4 (09/11/2026):** el MCP `correo-agoin` (`mcp/correo/`) y la skill `correo-agoin`, con la etiqueta nueva CORREO.
+  - Es la versión 2 del conector de correo de solo lectura que se usaba en un equipo: ahora también envía, responde, reenvía, guarda borradores, marca, mueve, borra y gestiona carpetas.
+  - Cada persona configura su buzón con `--configurar`.
+  - Va en un solo archivo, que solo necesita Node, y el plugin lo registra solo.
+  - Se probó con 47 comprobaciones sobre un buzón real, solo con correos de prueba enviados a uno mismo.
+  - `entorno-windows-agoin` gana una trampa: PowerShell 5.1 lanzado desde PowerShell 7 hereda `PSModulePath` y no carga sus módulos.

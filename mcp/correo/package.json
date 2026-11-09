@@ -1,0 +1,23 @@
+{
+  "name": "correo-agoin-mcp",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Conector MCP del correo de agoin.es (Dinahosting): leer, buscar, enviar, responder, reenviar, borradores, marcar, mover, borrar y carpetas.",
+  "main": "server.mjs",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "imapflow": "^2.2.6",
+    "mailparser": "^3.9.36",
+    "nodemailer": "^7.0.13",
+    "zod": "^4.6.5"
+  },
+  "scripts": {
+    "build": "esbuild server.mjs --bundle --platform=node --format=esm --target=node20 --outfile=dist/correo-agoin.mjs \"--banner:js=import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);\"",
+    "configurar": "node server.mjs --configurar",
+    "probar": "node server.mjs --probar"
+  },
+  "devDependencies": {
+    "esbuild": "0.24.2"
+  }
+}

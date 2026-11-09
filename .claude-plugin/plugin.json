@@ -1,7 +1,7 @@
 {
   "name": "agoin",
-  "description": "Skills de AGOIN, etiquetadas por tema: cómo trabaja el estudio, su libro de estilo y procedimientos probados para proyectos de arquitectura (Revit, mediciones, planos, rehabilitación, instalaciones, estructura con Robot, informes, web, vídeo con Blender, imágenes con Gemini), para trabajar de forma eficiente y para sus apps. Incluye el MCP «gemini», que maneja la app de Gemini para Windows.",
-  "version": "1.3.1",
+  "description": "Skills de AGOIN, etiquetadas por tema: cómo trabaja el estudio, su libro de estilo y procedimientos probados para proyectos de arquitectura (Revit, mediciones, planos, rehabilitación, instalaciones, estructura con Robot, informes, web, vídeo con Blender, imágenes con Gemini, correo), para trabajar de forma eficiente y para sus apps. Incluye los MCP «gemini» (app de Gemini para Windows) y «correo-agoin» (correo de agoin.es).",
+  "version": "1.4.0",
   "author": {
     "name": "AGOIN"
   },
@@ -9,6 +9,10 @@
     "gemini": {
       "command": "python",
       "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/gemini/server.py"]
+    },
+    "correo-agoin": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/correo/dist/correo-agoin.mjs"]
     }
   }
 }

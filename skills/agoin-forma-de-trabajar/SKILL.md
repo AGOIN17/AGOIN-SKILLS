@@ -220,4 +220,5 @@ Estas reglas salen de correcciones reales. Cada una lleva su porqué, para aplic
 | OPTIMIZACIÓN | Subagentes, procesos largos, cadenas de regeneración, retomar | `optimizar-trabajo` |
 | WINDOWS | Manejar ventanas de programas, imprimir a PDF, AutoCAD | `automatizar-programas-windows` |
 | WINDOWS | Consola, servidor, cuentas, disco | `entorno-windows-agoin` |
+| CORREO | Buscar, leer, enviar y ordenar el correo de agoin.es (MCP «correo-agoin») | `correo-agoin` |
 | APPS | Apps internas | `desarrollo-apps-agoin` |
