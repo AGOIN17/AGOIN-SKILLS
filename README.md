@@ -72,6 +72,7 @@ Cada skill lleva una o dos etiquetas. Se ven al principio de su descripción (po
 | `instalaciones-mep` | Trazados construibles, coordinación, criterios de electricidad y telecomunicaciones, alternativas y trampas de Revit MEP. |
 | `calculo-estructural` | Comprobaciones y propuestas para el estructurista, y Robot Structural Analysis (API, módulo de zapatas, notas RTF). |
 | `video-render-arquitectura` | Vídeo de obra con Blender, estilo de dibujo de concurso, cámara, parpadeos y fotos de estancias. |
+| `gemini-imagenes` | [BLENDER · WINDOWS] Vistas 3D de Revit o del visor convertidas en imágenes fotorrealistas con la app de Gemini, mediante el MCP `gemini`: borradores con Flash, versión buena con «Redo with Pro», segundo plano, criterios para no tocar la geometría y privacidad. |
 | `web-proyecto` | Web o visor del proyecto: qué es público, interfaz, versión interna con notas, caché, pruebas en vivo y despliegue. |
 
 ### OPTIMIZACIÓN · WINDOWS · APPS
@@ -122,11 +123,19 @@ claude plugin update agoin@agoin-skills
 
 También se puede activar la actualización automática en `/plugin` › Marketplaces.
 
+**El MCP «gemini».** El plugin trae también un servidor MCP que maneja la app de Gemini para Windows (lo usa la skill `gemini-imagenes`). Se registra solo, pero solo funciona si en el equipo hay:
+
+- la app de Gemini para Windows, con la sesión iniciada;
+- Python 3 en el `PATH` con sus librerías: `python -m pip install -r mcp/gemini/requirements.txt`.
+
+Si no se usa, no molesta: no carga nada hasta el primer encargo. Los detalles están en [mcp/gemini/README.md](mcp/gemini/README.md).
+
 ### B. Copiando carpetas
 
 1. Copia cada carpeta `skills/<nombre>/` a `%USERPROFILE%\.claude\skills\`.
 2. No copies la raíz del repositorio.
 3. Para actualizar, vuelve a copiarlas.
+4. El MCP «gemini» hay que registrarlo a mano: ver [mcp/gemini/README.md](mcp/gemini/README.md).
 
 ### Opcional: que las reglas generales se apliquen siempre
 
@@ -173,4 +182,11 @@ La plantilla está en [docs/plantilla-skill.md](docs/plantilla-skill.md).
   - Además se añadieron unas líneas a skills que ya existían, sin cambiar sus reglas:
     - `planos-laminas`: sumar los cuadros y compararlos con la memoria;
     - `mediciones-presupuesto`: el «|» en el BC3, los descompuestos que quedan en el ciego, las remisiones a partidas por número y los códigos de lámina citados;
+    - `agoin-forma-de-trabajar`: la nueva fila en la tabla de skills.
+- **1.3 (09/11/2026):** el MCP `gemini` (`mcp/gemini/`) y la skill `gemini-imagenes`, montados y probados en una sesión de CHIVERO.
+  - El MCP maneja la app de Gemini para Windows por accesibilidad: borradores con Flash, «Redo with Pro», cola en segundo plano y ventana aparcada.
+  - El plugin lo registra solo.
+  - Además se añadieron unas líneas a skills que ya existían, sin cambiar sus reglas:
+    - `automatizar-programas-windows`: apartado de apps Electron o Chromium (cuadros de archivo con `WM_CHAR`, ventana aparcada, `HWND_TOPMOST`);
+    - `video-render-arquitectura`: remite a `gemini-imagenes`;
     - `agoin-forma-de-trabajar`: la nueva fila en la tabla de skills.

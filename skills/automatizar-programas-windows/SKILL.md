@@ -54,6 +54,22 @@ Estas reglas evitan los dos.
 - **Las cintas WPF** (el botón de Dynamo en Revit) no responden a mensajes enviados: hace falta un clic real del ratón. Solo en tu instancia, nunca en la del usuario. Pide permiso, comprueba que la ventana está delante, hazlo cuando el usuario no esté usando el equipo y repite si el clic cayó en otra ventana.
 - **Para que un programa no coja un puerto al arrancar** (8080), ocúpalo un rato con un `HttpListener` de relleno en segundo plano y suéltalo después.
 
+## Apps Electron o Chromium (Gemini, Teams, Slack…)
+
+Lo aprendido al montar el MCP `gemini` (`mcp/gemini/gemini_app.py`), que maneja la app de Gemini para Windows sin ratón ni foco:
+
+- **No fuerces el modo de depuración.** La app de Gemini se cierra si se arranca con `--remote-debugging-port`: es una protección, y no se salta. UI Automation, que es lo que usan los lectores de pantalla, sí vale.
+- **El árbol de la página aparece cuando un cliente lo pide.** La primera consulta puede devolver solo los botones de la barra de título: reintenta.
+- **Pulsar:** `Invoke`; los botones que abren menús, con `ExpandCollapse`; las opciones de radio, con `SelectionItem`. La caja de texto admite `ValuePattern.SetValue`.
+- **Los cuadros «Abrir» y «Guardar como» cuelgan de la ventana de la app en UIA**, no del escritorio.
+  - El campo del nombre ignora `WM_SETTEXT` y `SetValue`: enseña el texto, pero guarda con el nombre que traía. En una prueba, ese nombre ya existía y Windows pidió reemplazar un archivo del usuario.
+  - Escribe con `WM_CHAR` carácter a carácter y comprueba el valor antes de pulsar.
+  - Si sale «¿Desea reemplazarlo?», contesta «No» con `TDM_CLICK_BUTTON` e `IDNO`.
+- **Ventana minimizada o fuera de la pantalla:** la página se encoge o Chromium deja de pintarla, y los menús no se abren.
+  - Para trabajar sin que se vea, restáurala dejando asomar 2 px en el borde izquierdo del escritorio, siempre encima mientras trabajas, y al terminar vuelve a minimizarla con su posición de siempre.
+  - `SetWindowPlacement` no deja restaurar fuera de la pantalla: recoloca la ventana a la vista. En una prueba quedó 20 s encima del trabajo del usuario. Restaura y mueve con `SetWindowPos` en el mismo instante.
+  - En ctypes, pasa `HWND_TOPMOST` (-1) como `wintypes.HWND`. Como entero de 32 bits la llamada falla sin avisar.
+
 ## Navegador con sesión
 
 Si hay que manejar una web que pide iniciar sesión y «Claude in Chrome» no conecta (desde la extensión de VS Code no aparecieron sus herramientas, ni con `/chrome` ni con `@browser`):
