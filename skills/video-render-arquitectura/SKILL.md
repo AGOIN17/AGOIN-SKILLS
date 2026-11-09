@@ -21,6 +21,7 @@ El usuario compara el vídeo con los planos y ve enseguida los fallos: un ladril
 - **Música:** pregunta antes. En la web el vídeo va sin música.
 - **Si se amuebla:** interiorismo con buen gusto, a partir de las referencias que dé el usuario.
 - **Imágenes reales:** si el usuario deja sus propias imágenes para un uso, se usan esas y solo esas. Una imagen generada con IA se marca como orientativa y se compara con el original, porque la IA se inventa el entorno.
+- **Dar realismo a una vista con IA** (la app de Gemini): ver `gemini-imagenes`.
 
 ## Secuencia de obra
 

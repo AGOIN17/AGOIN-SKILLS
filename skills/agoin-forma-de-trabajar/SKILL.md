@@ -215,6 +215,7 @@ Estas reglas salen de correcciones reales. Cada una lleva su porqué, para aplic
 | INSTALACIONES | Instalaciones | `instalaciones-mep` |
 | ROBOT | Estructura, cimentación, Robot | `calculo-estructural` |
 | BLENDER | Vídeo, renders, fotos | `video-render-arquitectura` |
+| BLENDER · WINDOWS | Imágenes fotorrealistas con la app de Gemini (MCP «gemini») | `gemini-imagenes` |
 | WEB | Web del proyecto | `web-proyecto` |
 | OPTIMIZACIÓN | Subagentes, procesos largos, cadenas de regeneración, retomar | `optimizar-trabajo` |
 | WINDOWS | Manejar ventanas de programas, imprimir a PDF, AutoCAD | `automatizar-programas-windows` |
