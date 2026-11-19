@@ -44,6 +44,7 @@ Cada skill lleva una o dos etiquetas. Se ven al principio de su descripción (po
 | `nuevo-proyecto-arquitectura` | Arrancar o retomar un proyecto: documentos base, carpetas, orden de trabajo, preguntas del primer día y archivos para continuar. Incluye la guía del método. |
 | `rehabilitacion-levantamiento` | Rehabilitar sobre un levantamiento: qué fuente manda, nube de puntos, dron, fases y criterios de rehabilitación del estudio. |
 | `comprobar-normativa` | Comprobar normativa citando el artículo, sin alarmar en falso ni dejarse nada. |
+| `soluciones-alternativas-mijeban` | [PROYECTO · ESTILO] Soluciones alternativas a un proyecto ajeno para una constructora (MIJEBAN): fichas A4 por sistema dibujadas en DWG con accoreconsole y ezdxf, informes en Word y PDF para arquitecto y promotores, y mediciones con BC3 sin precios. Con las reglas de redacción del usuario, 110 scripts y la plantilla de la ficha. Primer caso: Cigarral Montealegre (Toledo, 2026). |
 
 ### MEDICIONES
 
@@ -113,11 +114,11 @@ claude plugin marketplace add AGOIN17/AGOIN-SKILLS
 claude plugin install agoin@agoin-skills --scope user
 ```
 
-**Requisitos.** El repositorio es privado, así que:
+**Requisitos.** El repositorio es público, así que no hace falta pedir acceso:
 
-- cada persona necesita acceso de lectura;
-- git tiene que estar autenticado en el equipo: `gh auth login` y después `gh auth setup-git`;
-- sin clave SSH en GitHub, define la variable `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1`.
+- git tiene que estar instalado en el equipo;
+- sin clave SSH en GitHub, define la variable `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1`;
+- para subir cambios sí hace falta permiso de escritura y haber iniciado sesión con `gh auth login`.
 
 **Cómo se usan.** Con el plugin, las skills se llaman `agoin:<nombre>`. Dentro de las skills, las referencias de una a otra usan el nombre corto.
 
@@ -163,7 +164,7 @@ Trabajo para AGOIN: en cualquier encargo, aplica la skill agoin-forma-de-trabaja
 
 1. **Generalista.** Tiene que servir en cualquier proyecto. Los casos concretos entran solo como ejemplo de por qué existe una regla.
 2. **Cada regla con su porqué.** Indica la corrección o el incidente que la originó. Así Claude la aplica con criterio, sin rigidez.
-3. **Nada sensible.** Ni contraseñas, ni tokens, ni precios, ni datos personales o de clientes. El repositorio es privado, pero las skills se cargan en cualquier sesión.
+3. **Nada sensible.** Ni contraseñas, ni tokens, ni precios, ni datos personales o de clientes. **El repositorio es público: lo puede leer cualquiera.** Los datos de un caso concreto se quedan en la copia local de la skill o en la carpeta del proyecto, y en los scripts los nombres de personas van como `<Promotores>` o similar.
 4. **Sin contradicciones.**
    - Si cambias un criterio, cambia todas las skills que lo mencionan. Búscalas con `grep -ri "<palabra>" skills/`.
    - Si una regla nueva choca con otra, decide cuál manda y deja solo esa.
@@ -217,3 +218,10 @@ La plantilla está en [docs/plantilla-skill.md](docs/plantilla-skill.md).
   - Va en un solo archivo, que solo necesita Node, y el plugin lo registra solo.
   - Se probó con 47 comprobaciones sobre un buzón real, solo con correos de prueba enviados a uno mismo.
   - `entorno-windows-agoin` gana una trampa: PowerShell 5.1 lanzado desde PowerShell 7 hereda `PSModulePath` y no carga sus módulos.
+- **1.5 (19/11/2026):** skill nueva `soluciones-alternativas-mijeban` (PROYECTO · ESTILO), sacada de las sesiones de Cigarral Montealegre para la constructora MIJEBAN (05–10/11/2026).
+  - Recoge las reglas de redacción de los informes para arquitecto y promotores, el método de las fichas A4 (accoreconsole, ezdxf, axonometría con caras ocultas), las mediciones de alternativas con BC3 sin precios, 110 scripts y la plantilla DWG de la ficha.
+  - Es la versión pública: no lleva los datos ni las notas del caso (memoria y geotécnico en texto, licitación, precios, nombres), que se quedan en la copia local. En los scripts del informe, promotores y arquitectos van como `<Promotores>` y `<Arquitectos redactores>`.
+  - Además se añadieron unas líneas a skills que ya existían, sin cambiar sus reglas:
+    - `automatizar-programas-windows`: AutoCAD LT 2023 trae `accoreconsole.exe` (DXFOUT, SAVEAS y -PLOT a PDF sin tocar el AutoCAD del usuario);
+    - `agoin-forma-de-trabajar`: la nueva fila en la tabla de skills.
+  - El README dice ahora que el repositorio es público, como lo tiene GitHub.

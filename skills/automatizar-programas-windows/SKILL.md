@@ -97,9 +97,10 @@ Funcionó a la primera. Si la web es una app de AGOIN en producción, sigue adem
 
 ## AutoCAD
 
-- **AutoCAD LT no tiene COM.**
+- **AutoCAD LT no tiene COM, pero AutoCAD LT 2023 trae `accoreconsole.exe`** en su carpeta de programa (`C:\Program Files\Autodesk\AutoCAD LT 2023\`). Funciona con guiones `.scr`: `DXFOUT`, `SAVEAS 2018` y `-PLOT` de una presentación a PDF, sin tocar el AutoCAD que el usuario tiene abierto. Se probó en Cigarral Montealegre (noviembre de 2026). Los guiones y sus trampas están en `soluciones-alternativas-mijeban/references/metodo-fichas.md` (apartado 2).
+  - Lánzalo con la carpeta temporal como directorio de trabajo: escribe `plot.log` en el directorio actual.
   - ODA File Converter convierte DWG y DXF, pero su versión gratuita es para uso no comercial. Comprueba la licencia antes de usarlo en un encargo.
-  - La alternativa es guardar el DXF a mano desde AutoCAD LT.
+  - Si no hay accoreconsole, la alternativa es guardar el DXF a mano desde AutoCAD LT.
 - **AutoCAD completo:**
   - usa `accoreconsole` con guiones `.scr`;
   - pon los comandos con el prefijo `_.`, porque la interfaz está en español;

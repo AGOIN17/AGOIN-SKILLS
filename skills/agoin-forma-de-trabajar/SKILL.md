@@ -206,6 +206,7 @@ Estas reglas salen de correcciones reales. Cada una lleva su porqué, para aplic
 | PROYECTO | Empezar o retomar un proyecto | `nuevo-proyecto-arquitectura` |
 | PROYECTO | Rehabilitar lo existente: levantamiento, nube de puntos, fases | `rehabilitacion-levantamiento` |
 | PROYECTO | Comprobar normativa sin alarmar ni omitir | `comprobar-normativa` |
+| PROYECTO | Soluciones alternativas para una constructora (MIJEBAN): fichas A4, informes a arquitecto y promotor, mediciones; caso Cigarral Montealegre | `soluciones-alternativas-mijeban` |
 | MEDICIONES | Mediciones, presupuesto, BC3, licitación | `mediciones-presupuesto` |
 | REVIT | Revit por API o Dynamo | `revit-automatizacion` |
 | REVIT | Revisar el modelo antes de enseñarlo | `revision-modelo-bim` |
